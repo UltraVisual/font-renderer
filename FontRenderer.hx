@@ -1,6 +1,6 @@
 package;
 
-import uk.co.ultravisual.fontrenderer.utils.GlyphFileRequest;
+import uk.co.ultravisual.fontrenderer.utils.GlyphFontRequest;
 import uk.co.ultravisual.fontrenderer.utils.GlyphByteArray;
 import uk.co.ultravisual.fontrenderer.table.PostTable;
 import flash.geom.Rectangle;
@@ -23,7 +23,7 @@ import flash.geom.Matrix;
 
 class FontRenderer {
 
-    private var fileRequest:GlyphFileRequest;
+    private var fileRequest:GlyphFontRequest;
     private var fontCollections:Array<TFontCollection>;
     private var fontCollection:TFontCollection;
     private static var _drawBounds:Bool = false;
@@ -84,7 +84,7 @@ class FontRenderer {
 
     private function init(url:String):Void {
         fontCollections = new Array<TFontCollection>();
-        fileRequest = new GlyphFileRequest();
+        fileRequest = new GlyphFontRequest();
         fileRequest.addEventListener(Event.COMPLETE, onFontLoaded);
         fileRequest.load(url);
     }
@@ -100,11 +100,7 @@ class FontRenderer {
 
 
     private function onFontLoaded(event:Event):Void {
-        var bytes:GlyphByteArray = fileRequest.getLoadedBytes();
-        fontCollection = TFontCollection.create(bytes, fileRequest.requestUrl);
-        fontCollections.push(fontCollection);
-        fileRequest.close();
-        var font:TFont = fontCollections[0].getFont(0);
+        var font:TFont = fileRequest.getFont();
         var table:GlyfTable = cast font.getTable(TableType.glyf);
         var postTable:PostTable = cast font.getTable(TableType.post);
         var numGlyphs = font.getNumGlyphs();
@@ -134,7 +130,7 @@ class FontRenderer {
         }
     }
 
-    public function buildPath(font:TFont, descript:GlyfDescript):Sprite {
+    private function buildPath(font:TFont, descript:GlyfDescript):Sprite {
         var glyph:Glyph = null;
         var path:PathBuilder = null;
 
