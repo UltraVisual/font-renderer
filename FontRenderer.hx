@@ -1,5 +1,12 @@
 package;
 
+import uk.co.ultravisual.fontrenderer.utils.FontNames;
+import uk.co.ultravisual.fontrenderer.utils.GlyphInfo;
+import flash.utils.JSON;
+import flash.net.URLLoader;
+import flash.net.URLRequest;
+import flash.net.URLStream;
+import flash.net.FileReference;
 import uk.co.ultravisual.fontrenderer.utils.GlyphFontRequest;
 import uk.co.ultravisual.fontrenderer.utils.GlyphByteArray;
 import uk.co.ultravisual.fontrenderer.table.PostTable;
@@ -37,13 +44,14 @@ class FontRenderer {
     private static var size:Int = 16;
     private static var stroke:Stroke = new Stroke();
     private static var fill:Fill = new Fill();
+    private static var glyphs:Array<GlyphInfo> = FontNames.getAsArray();
 
     public function new(parentSprite:Sprite):Void {
         charList = new Array<String>();
         parent = parentSprite;
     }
 
-    public function renderFont(fontUrlString:String):FontRenderer{
+    public function renderFont(fontUrlString:String):FontRenderer {
         init(fontUrlString);
         return this;
     }
@@ -53,12 +61,12 @@ class FontRenderer {
         return this;
     }
 
-    public function setCompleteCallback(completeCallback:Dynamic):FontRenderer{
+    public function setCompleteCallback(completeCallback:Dynamic):FontRenderer {
         complete = completeCallback;
         return this;
     }
 
-    public function setText(text:String):FontRenderer{
+    public function setText(text:String):FontRenderer {
         textToRender = text;
         return this;
     }
@@ -68,7 +76,7 @@ class FontRenderer {
         return this;
     }
 
-    public function setStroke(_stroke:Stroke):FontRenderer{
+    public function setStroke(_stroke:Stroke):FontRenderer {
         stroke = _stroke;
         return this;
     }
@@ -105,7 +113,9 @@ class FontRenderer {
         var postTable:PostTable = cast font.getTable(TableType.post);
         var numGlyphs = font.getNumGlyphs();
         for (i in 0...numGlyphs) {
-            charList.push(postTable.getGlyphName(i));
+            var glyphName = postTable.getGlyphName(i);
+            charList.push(FontNames.getValueFromName(glyphName));
+
         }
         drawText(textToRender, font, table);
     }
@@ -149,7 +159,7 @@ class FontRenderer {
             var g:Graphics2D = new Graphics2D(glyphCanvas.graphics, stroke, fill, path);
             g.render();
 
-            if(_drawBounds){
+            if (_drawBounds) {
                 drawBounds(glyphCanvas);
             }
 
