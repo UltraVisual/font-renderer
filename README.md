@@ -1,6 +1,11 @@
 Font Renderer for Haxe
 =============
 
+Install as haxe lib via
+```
+haxelib git font-renderer https://github.com/UltraVisual/font-renderer
+```
+
 Haxe font rendering library
 
 Example usage:
